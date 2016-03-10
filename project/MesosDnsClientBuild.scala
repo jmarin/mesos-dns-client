@@ -27,10 +27,12 @@ object MesosDnsClientBuild extends Build {
   import Dependencies._
 
   val commonDeps = Seq(logback, scalaTest, scalaCheck)
-  val akkaDeps = commonDeps ++ Seq(akkaSlf4J, akkaStream)
+  val akkaDeps = commonDeps ++ Seq(akkaSlf4J, akkaStream, akkaHttp, akkaHttpJson)
 
   lazy val mesosDnsClient = (project in file("."))
+    .configs(IntegrationTest)
     .settings(buildSettings: _*)
+    .settings(Defaults.itSettings: _*)
     .settings(
       Seq(
         assemblyJarName in assembly := {s"${name.value}.jar"},
@@ -39,7 +41,8 @@ object MesosDnsClientBuild extends Build {
           case x =>
             val oldStrategy = (assemblyMergeStrategy in assembly).value
             oldStrategy(x)
-        }
+        },
+        libraryDependencies ++= akkaDeps
       )
     )
 

@@ -7,4 +7,4 @@ object MesosDnsVersion {
   def empty: MesosDnsVersion = MesosDnsVersion("", "", "")
 }
 
-case class MesosDnsVersion(service: String, url: String, version: String)
+case class MesosDnsVersion(Service: String, URL: String, Version: String)
