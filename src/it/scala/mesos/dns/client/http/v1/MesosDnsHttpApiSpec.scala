@@ -1,16 +1,18 @@
 package mesos.dns.client.http.v1
 
+import akka.actor.ActorSystem
 import mesos.dns.client.http.v1.service.MesosDnsClient
-import org.scalatest.{AsyncFlatSpec, FlatSpec, MustMatchers}
-
-import scala.concurrent.{ExecutionContext, Future}
+import org.scalatest.{AsyncFlatSpec, MustMatchers}
+import scala.concurrent.ExecutionContext
 
 class MesosDnsHttpApiSpec extends AsyncFlatSpec with MustMatchers {
 
   override implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
+  val mesosDnsClient = new MesosDnsClient(sys = ActorSystem())
+
   "Mesos DNS Server" must "return version information" in {
-    val maybeVersion = MesosDnsClient.mesosDnsVersion
+    val maybeVersion = mesosDnsClient.mesosDnsVersion
     maybeVersion.flatMap { version =>
       version match {
         case Right(v) =>
@@ -36,7 +38,7 @@ class MesosDnsHttpApiSpec extends AsyncFlatSpec with MustMatchers {
   //}
 
   it must "return ip addresses that correspond to a hostname" in {
-    val maybeService = MesosDnsClient.mesosDnsHost("marathon.mesos")
+    val maybeService = mesosDnsClient.mesosDnsHost("marathon.mesos")
     maybeService.flatMap { host =>
       host match {
         case Right(h) =>
@@ -49,7 +51,7 @@ class MesosDnsHttpApiSpec extends AsyncFlatSpec with MustMatchers {
 
   // Assumes chronos is deployed through Marathon
   it must "return service information for chronos" in {
-    val maybeChronos = MesosDnsClient.mesosDnsService("chronos")
+    val maybeChronos = mesosDnsClient.mesosDnsService("chronos")
     maybeChronos.flatMap { chronos =>
       chronos match {
         case Right(s) =>

@@ -11,8 +11,9 @@ import scala.concurrent.{ ExecutionContext, Future }
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import com.typesafe.config.ConfigFactory
 
-object MesosDnsClient extends ServiceClient with MesosDnsClientJsonProtocol {
-  override implicit val system: ActorSystem = ActorSystem("mesos-dns-client")
+class MesosDnsClient(sys: ActorSystem) extends ServiceClient with MesosDnsClientJsonProtocol {
+
+  override implicit val system: ActorSystem = sys
   override implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   implicit val ec: ExecutionContext = system.dispatcher
