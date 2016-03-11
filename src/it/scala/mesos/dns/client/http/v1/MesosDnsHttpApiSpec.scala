@@ -1,8 +1,9 @@
 package mesos.dns.client.http.v1
 
 import akka.actor.ActorSystem
-import mesos.dns.client.http.v1.service.MesosDnsClient
+import mesos.dns.client.http.v1.service.{MesosDnsClient, MesosDnsServiceActor}
 import org.scalatest.{AsyncFlatSpec, MustMatchers}
+
 import scala.concurrent.ExecutionContext
 
 class MesosDnsHttpApiSpec extends AsyncFlatSpec with MustMatchers {
@@ -10,6 +11,10 @@ class MesosDnsHttpApiSpec extends AsyncFlatSpec with MustMatchers {
   override implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   val mesosDnsClient = new MesosDnsClient(sys = ActorSystem())
+
+  val system = mesosDnsClient.system
+
+  system.actorOf(MesosDnsServiceActor.props)
 
   "Mesos DNS Server" must "return version information" in {
     val maybeVersion = mesosDnsClient.mesosDnsVersion
